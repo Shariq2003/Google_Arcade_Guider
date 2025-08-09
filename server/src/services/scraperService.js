@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const chromium = require('chromium');
 const pLimit = require('p-limit').default;
 const { parseDurationToMinutes } = require('../utils/parseDuration');
 
@@ -69,6 +70,10 @@ const isValidUrl = (url) => {
 exports.scrapeAll = async (rows, opts = {}) => {
     const browser = await puppeteer.launch({
         headless: true,
+        executablePath:
+            process.env.RENDER
+                ? chromium.path
+                : undefined,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     try {
