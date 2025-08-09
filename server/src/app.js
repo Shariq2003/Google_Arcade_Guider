@@ -3,7 +3,11 @@ const cors = require('cors');
 const coursesRouter = require('./routes/courses');
 
 const app = express();
-app.use(cors(process.env.CORS));
+app.use(cors({
+    origin: process.env.CORS,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 // The above statement allows requests from the specified origins
 app.use(express.json());
 app.use('/api', coursesRouter);
