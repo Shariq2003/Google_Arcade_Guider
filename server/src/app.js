@@ -3,7 +3,12 @@ const cors = require('cors');
 const coursesRouter = require('./routes/courses');
 
 const app = express();
-app.use(cors("*"));
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 
 app.use(express.json());
 app.use('/api', coursesRouter);
