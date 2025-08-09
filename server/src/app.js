@@ -3,12 +3,33 @@ const cors = require('cors');
 const coursesRouter = require('./routes/courses');
 
 const app = express();
-app.use(cors({
-    origin: process.env.CORS,
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-// The above statement allows requests from the specified origins
+
+let corsOptions;
+if (process.env.CORS) {
+    try {
+        const origins = JSON.parse(process.env.CORS);
+        corsOptions = {
+            origin: origins,
+            credentials: true,
+            optionsSuccessStatus: 200
+        };
+    } catch (error) {
+        corsOptions = {
+            origin: process.env.CORS,
+            credentials: true,
+            optionsSuccessStatus: 200
+        };
+    }
+} else {
+    corsOptions = {
+        origin: ['http://localhost:4200', 'https://google-arcade-guider.vercel.app'],
+        credentials: true,
+        optionsSuccessStatus: 200
+    };
+}
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use('/api', coursesRouter);
 
