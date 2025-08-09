@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000', // backend
+  apiUrl: 'https://google-arcade-guider.onrender.com', // backend
 };
