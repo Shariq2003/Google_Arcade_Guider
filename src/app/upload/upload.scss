@@ -1,0 +1,138 @@
+.upload-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upload-heading {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-heading small {
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--muted);
+  margin-left: 0.5rem;
+}
+
+
+.file-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.file-name {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hide native file input */
+input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 0.5rem 0.8rem;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #04202f;
+  font-weight: 700;
+  border-radius: 7px;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  text-align: center;
+  white-space: nowrap;
+  transition: background 0.3s ease;
+}
+
+.file-label:hover {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+}
+
+
+.btn {
+  padding: 0.5rem 0.8rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #04202f;
+  font-weight: 700;
+  border: none;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.progress {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.results {
+  margin-top: 1rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+}
+
+.table-wrap {
+  max-height: 420px;
+  overflow: auto;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+.table-wrap table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 15px 0;
+  font-size: 0.9rem;
+}
+
+.table-wrap table th,
+.table-wrap table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left !important;
+  border-bottom: 1px dashed rgba(255,255,255,0.03);
+  color: var(--text);
+}
+
+.results-table thead th {
+  position: sticky;
+  top: 0;
+  background: rgba(11,18,28,0.6);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+}

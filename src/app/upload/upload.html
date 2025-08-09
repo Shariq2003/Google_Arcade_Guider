@@ -1,0 +1,44 @@
+<div class="upload-top">
+    <div class="file-row">
+        <label for="fileUpload" class="file-label btn">Choose File</label>
+        <input id="fileUpload" type="file" (change)="onFileChange($event)" accept=".xlsx" />
+
+        <span class="file-name" [title]="selectedFileName">{{ selectedFileName }}</span>
+
+        <button [disabled]="!selectedFile" (click)="onSubmit()" class="btn primary">Upload & Process</button>
+    </div>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <div *ngIf="progress > 0 && progress < 100" class="progress">Uploading... {{progress}}%</div>
+</div>
+
+<div *ngIf="resultRows?.length" class="results">
+    <div class="results-header">
+        <div class="result-count">{{ resultRows.length }} row{{ resultRows.length > 1 ? 's' : '' }}</div>
+        <div class="actions">
+            <button (click)="downloadSheet()" class="btn primary">Download Sheet</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th *ngFor="let c of visibleColumns">{{ c }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let r of resultRows">
+                    <td *ngFor="let c of visibleColumns" [class.normal-cell]="c !== 'Title'">
+                        <ng-container *ngIf="c === 'Title'; else plainText">
+                            <a *ngIf="getLink(r); else titleText" [href]="getLink(r)" target="_blank" rel="noopener noreferrer">{{
+                                r[c] }}</a>
+                            <ng-template #titleText>{{ r[c] }}</ng-template>
+                        </ng-container>
+                        <ng-template #plainText>{{ r[c] }}</ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
