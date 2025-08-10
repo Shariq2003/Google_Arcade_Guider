@@ -8,12 +8,12 @@ const app = express();
 const corsOptions = {
     origin: [
         'https://google-arcade-guider.vercel.app',
-        'http://localhost:3000', // for local development
+        'http://localhost:4200', // for local development
         'http://localhost:5173', // for Vite dev server
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // if you need to send cookies
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
