@@ -1,59 +1,138 @@
-# GoogleArcadeGuider
+<div align="center">
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.3.
+# 🕹️ Google Arcade Guider
 
-## Development server
+**Upload your Google Cloud Arcade course sheet and get it back sorted from shortest to longest — so you can knock out the quickest badges first.**
 
-To start a local development server, run:
+[![Live Demo](https://img.shields.io/badge/Live_Demo-google--arcade--guider.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://google-arcade-guider.vercel.app)
 
-```bash
-ng serve
+![Angular](https://img.shields.io/badge/Angular_20-DD0031?style=flat-square&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![RxJS](https://img.shields.io/badge/RxJS-B7178C?style=flat-square&logo=reactivex&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![Puppeteer](https://img.shields.io/badge/Puppeteer-40B5A4?style=flat-square&logo=puppeteer&logoColor=white)
+![SheetJS](https://img.shields.io/badge/SheetJS_(xlsx)-217346?style=flat-square&logo=microsoftexcel&logoColor=white)
+![GitHub last commit](https://img.shields.io/github/last-commit/Shariq2003/Google_Arcade_Guider?style=flat-square)
+
+[How it works](#-how-it-works) · [Features](#-features) · [Getting Started](#-getting-started) · [API](#-api) · [Structure](#-project-structure)
+
+</div>
+
+---
+
+## 🤔 Why?
+
+Google Cloud Arcade hands out long lists of courses and labs. Each one takes a different amount of time, but the list doesn't tell you how long. **Arcade Guider** visits every link for you, reads its duration and returns the list **sorted by time** — a ready-made plan of attack.
+
+## 🔄 How it works
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as You
+    participant FE as Angular app
+    participant API as Express API
+    participant B as Headless Chrome (Puppeteer)
+    U->>FE: Upload .xlsx (course title + link)
+    FE->>API: POST /api/sort-courses (multipart)
+    API->>API: Read rows & hyperlinks (SheetJS)
+    par up to 5 pages at a time
+        API->>B: Open each course link
+        B-->>API: Duration text, e.g. 1 hour 30 minutes
+    end
+    API->>API: Parse → minutes, drop unknowns, sort ascending
+    API-->>FE: sorted_courses.xlsx
+    FE-->>U: Preview table + download
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## ✨ Features
 
-## Code scaffolding
+- 📤 **Simple upload** of an Excel sheet — links can be real hyperlinks or plain URLs
+- 🕷️ **Parallel scraping** with Puppeteer, limited to 5 concurrent pages via `p-limit`
+- 🧮 **Smart duration parsing** — understands "X hours", "Y minutes" and combinations, with a text-walk fallback when the main selector is missing
+- 📊 **Instant preview** of the sorted result in a table, plus a one-click `.xlsx` download
+- 📈 **Upload progress** and a **global loader** driven by an Angular `HttpInterceptor`
+- 🧩 Built on **Angular 20 standalone components & signals**
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🚀 Getting Started
 
-```bash
-ng generate component component-name
-```
+### Prerequisites
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Node.js 18+
+- Angular CLI: `npm install -g @angular/cli`
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+<details open>
+<summary><b>1️⃣ Backend (<code>server/</code>)</b></summary>
 
 ```bash
-ng test
+cd server
+npm install
+npm run dev        # nodemon → http://localhost:3000
 ```
 
-## Running end-to-end tests
+Locally, Puppeteer uses the Chrome it downloads on install. On Render (`RENDER` env var set) it switches to the bundled `chromium` package automatically.
 
-For end-to-end (e2e) testing, run:
+</details>
+
+<details open>
+<summary><b>2️⃣ Frontend (repo root)</b></summary>
 
 ```bash
-ng e2e
+npm install
+ng serve           # http://localhost:4200
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The API URL lives in [`src/environments/environment.ts`](src/environments/environment.ts) — point `apiUrl` at `http://localhost:3000` for local development.
 
-## Additional Resources
+</details>
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+<details>
+<summary><b>📄 Expected input sheet</b></summary>
+
+| Column A (Title — hyperlinked or a URL) | … other columns are kept as-is |
+|---|---|
+| [Build a Website on Google Cloud](https://www.cloudskillsboost.google/) | … |
+| `https://www.cloudskillsboost.google/course_templates/…` | … |
+
+The first row is treated as the header. The output adds **Duration in Minutes**, **Total Duration** and **Scrape Error** columns.
+
+</details>
+
+## 📡 API
+
+| Method | Endpoint | Body | Response |
+|---|---|---|---|
+| `POST` | `/api/sort-courses` | `multipart/form-data` with `file` (.xlsx) | `sorted_courses.xlsx` download |
+
+## 📁 Project Structure
+
+<details>
+<summary><b>Expand tree</b></summary>
+
+```text
+Google_Arcade_Guider/
+├── src/app/
+│   ├── upload/                     # upload UI, preview table, download
+│   ├── loader/                     # global loader component
+│   ├── interceptors/               # LoaderInterceptor
+│   └── services/                   # FileHelper (HTTP + progress), LoaderService
+└── server/src/
+    ├── routes/courses.js           # POST /api/sort-courses
+    ├── controllers/coursesController.js
+    ├── services/excelService.js    # read/write xlsx
+    ├── services/scraperService.js  # Puppeteer + p-limit
+    └── utils/parseDuration.js
+```
+
+</details>
+
+---
+
+<div align="center">
+
+Built by **[Shariq](https://github.com/Shariq2003)** · [LinkedIn](https://www.linkedin.com/in/shariq-sd)
+
+⭐ If this saved you some Arcade time, consider giving it a star!
+
+</div>
